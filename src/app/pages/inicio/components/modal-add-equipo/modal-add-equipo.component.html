@@ -1,0 +1,90 @@
+<h2 mat-dialog-title>{{ editar ? 'Actualizar Equipo': 'Agregar Equipo'}}</h2>
+<mat-dialog-content>
+  <form [formGroup]="equipoForm">
+    <div class="grid grid-cols-2 gap-6">
+      <mat-form-field class="w-full">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="nombre" placeholder="Nombre del Equipo">
+        <mat-error *ngIf="equipoForm.get('nombre')?.hasError('required')">
+          El nombre es requerido
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="w-full">
+        <mat-label>Estadio</mat-label>
+        <input matInput formControlName="estadio" placeholder="Estadio del Equipo">
+        <mat-error *ngIf="equipoForm.get('estadio')?.hasError('required')">
+          El estadio es requerido
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="w-full">
+        <mat-label>Sitio Web</mat-label>
+        <input matInput formControlName="sitio" placeholder="Sitio Web del Equipo">
+        <mat-error *ngIf="equipoForm.get('sitio')?.hasError('required')">
+          El sitio web es requerido
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="w-full">
+        <mat-label>Nacionalidad</mat-label>
+        <input matInput formControlName="nacionalidad" placeholder="Nacionalidad del Equipo">
+        <mat-error *ngIf="equipoForm.get('nacionalidad')?.hasError('required')">
+          La nacionalidad es requerida
+        </mat-error>
+      </mat-form-field>
+
+      <!-- <mat-form-field appearance="outline">
+        <mat-label>Año de Fundación</mat-label>
+        <input matInput formControlName="fundacion" (click)="picker" [matDatepicker]="picker">
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="equipoForm.get('fundacion')?.hasError('required')">
+          El año de fundación es requerido
+        </mat-error>
+      </mat-form-field> -->
+
+      <mat-form-field>
+        <mat-label>Año de Fundación</mat-label>
+        <input matInput formControlName="fundacion" (click)="picker.open()" [matDatepicker]="picker">
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <!-- <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>  -->
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="equipoForm.get('fundacion')?.hasError('required')">
+          El año de fundación es requerido
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="w-full">
+        <mat-label>Entrenador</mat-label>
+        <input matInput formControlName="entrenador" placeholder="Entrenador del Equipo">
+        <mat-error *ngIf="equipoForm.get('entrenador')?.hasError('required')">
+          El entrenador es requerido
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="w-full">
+        <mat-label>Capacidad</mat-label>
+        <input matInput formControlName="capacidad" placeholder="Capacidad del Estadio">
+        <mat-error *ngIf="equipoForm.get('capacidad')?.hasError('required')">
+          La capacidad es requerida
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="w-full">
+        <mat-label>Valor</mat-label>
+        <input matInput formControlName="valor" placeholder="Valor del Equipo">
+        <mat-error *ngIf="equipoForm.get('valor')?.hasError('required')">
+          El valor es requerido
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-stroked-button color="warn" (click)="cerrarDialog(false)">Cerrar</button>
+  <button mat-raised-button color="primary" [disabled]="equipoForm.invalid" (click)="editar ? actualizarEquipo() : addEquipo()">
+    {{ editar ? 'Actualizar': 'Agregar'}}
+  </button>
+</mat-dialog-actions>

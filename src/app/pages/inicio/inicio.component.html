@@ -1,0 +1,193 @@
+<mat-toolbar>
+  <div class="flex flex-row justify-between w-full">
+    <span>Prueba Futbol</span>
+
+    <div class="flex flex-row items-center gap-2" *ngIf="userLogged">
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>account_circle</mat-icon>
+
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="cerrarSeccion()">
+          <mat-icon>exit_to_app</mat-icon>
+          <span>Cerrar Sesión</span>
+        </button>
+      </mat-menu>
+    </div>
+
+    <!-- Botton de loguear -->
+    <button mat-raised-button color="primary" routerLink="/" *ngIf="!userLogged">
+      <mat-icon>login</mat-icon>
+      <span class="ml-2">Iniciar Sesión</span>
+    </button>
+  </div>
+</mat-toolbar>
+
+<div class="p-4 w-full">
+  <div class="flex flex-col items-center justify-center gap-3 w-full">
+    <div class="flex flex-row items-center justify-between w-full">
+      <h1 class="text-2xl font-bold">Equipos</h1>
+
+      <div class="flex flex-row items-center w-28">
+        <mat-form-field>
+          <mat-label>Ingresar rango de fecha</mat-label>
+          <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
+            <input matStartDate formControlName="start" placeholder="Fecha Inicio" (click)="picker.open()" />
+            <input matEndDate formControlName="end" placeholder="Fecha Fin" (click)="picker.open()" />
+          </mat-date-range-input>
+          <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+          <!-- <mat-datepicker-toggle
+            matIconSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle> -->
+          <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+        <button *ngIf="range.value.start || range.value.end" mat-icon-button color="primary" (click)="range.reset()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <mat-form-field appearance="outline">
+          <mat-label>Buscar</mat-label>
+          <input matInput [formControl]="filtro" placeholder="Busqueda por ID" />
+          <button
+            mat-icon-button
+            matSuffix
+            *ngIf="filtro.value"
+            (click)="filtro.reset()"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+
+      <button mat-raised-button color="primary" (click)="openDialog()" *ngIf="userLogged">
+        <mat-icon>add</mat-icon>
+        <span class="ml-2">Agregar</span>
+      </button>
+    </div>
+    <div class="px-20 w-full">
+      <ng-container *ngIf="!loading; else cargando">
+        <mat-table class="w-full shadow-lg" [dataSource]="equipos">
+          <ng-container matColumnDef="nro" class="w-8">
+            <mat-header-cell class="w-8" *matHeaderCellDef>
+              No.
+            </mat-header-cell>
+            <mat-cell class="w-8" *matCellDef="let i = index">
+              {{ i + 1 }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="nombre">
+            <mat-header-cell *matHeaderCellDef> Nombre </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              {{ element.nombre }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="estadio">
+            <mat-header-cell *matHeaderCellDef> Estadio </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              {{ element.estadio }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="sitio">
+            <mat-header-cell *matHeaderCellDef> Sitio Web </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <a
+                [href]="element.sitio"
+                target="_blank"
+                class="text-blue-500 underline"
+                *ngIf="element.sitio; else noSitio"
+              >
+                {{ element.sitio }}
+              </a>
+              <ng-template #noSitio> No tiene </ng-template>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="nacionalidad">
+            <mat-header-cell *matHeaderCellDef> Nacionalidad </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              {{ element.nacionalidad }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="fundacion">
+            <mat-header-cell *matHeaderCellDef>
+              Año de Fundación
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              {{ element.fundacion | date : "dd-MM-yyyy" }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="entrenador">
+            <mat-header-cell *matHeaderCellDef> Entrenador </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              {{ element.entrenador }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="capacidad">
+            <mat-header-cell *matHeaderCellDef> Capacidad </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              {{ element.capacidad }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="valor">
+            <mat-header-cell *matHeaderCellDef>
+              Valor del Equipo
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <span>{{
+                (element.valor ? element.valor : 0)
+                  | currency : "COP" : "symbol-narrow" : "1.0-2"
+              }}</span>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="acciones">
+            <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <div class="flex flex-row items-center justify-center gap-2" *ngIf="userLogged">
+                <button
+                  mat-icon-button
+                  color="primary"
+                  (click)="openDialog(element)"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  color="warn"
+                  (click)="deleteEquipo(element)"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+        </mat-table>
+        <mat-paginator
+          [length]="totalData"
+          [pageSize]="50"
+          (page)="nextPagina($event)"
+          [showFirstLastButtons]="true"
+        >
+        </mat-paginator>
+      </ng-container>
+      <ng-template #cargando>
+        <div class="flex flex-col items-center justify-center w-full pt-10">
+          <mat-spinner class="w-full" [diameter]="60"></mat-spinner>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

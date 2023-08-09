@@ -1,0 +1,18 @@
+table {
+  width: 100%;
+}
+
+.mat-column-nro {
+  flex: 0 0 67px !important;
+  width: 67px !important;
+}
+
+.mat-column-nombre, .mat-column-estadio {
+  flex: 0 0 200px !important;
+  width: 200px !important;
+}
+
+.mat-column-fundacion, .mat-column-nacionalidad, .mat-column-entrenador {
+  flex: 0 0 150px !important;
+  width: 150px !important;
+}
